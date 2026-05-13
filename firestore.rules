@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Common helpers
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    // Brand Applications
+    match /brandApplications/{applicationId} {
+      allow create: if isValidBrandApplication(incoming());
+      allow read: if false; // Only admins (if any) or cloud functions would read
+    }
+
+    function isValidBrandApplication(data) {
+      return data.keys().hasAll(['companyName', 'contactName', 'email', 'industry', 'budget', 'objective', 'status', 'createdAt'])
+        && data.keys().size() == 8
+        && data.companyName is string && data.companyName.size() > 0 && data.companyName.size() <= 200
+        && data.contactName is string && data.contactName.size() > 0 && data.contactName.size() <= 200
+        && data.email is string && data.email.size() > 0 && data.email.size() <= 200 && data.email.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$')
+        && data.industry is string && data.industry.size() > 0
+        && data.budget is string && data.budget.size() > 0
+        && data.objective is string && data.objective.size() > 0 && data.objective.size() <= 2000
+        && data.status == 'pending'
+        && data.createdAt == request.time;
+    }
+
+    // Creator Applications
+    match /creatorApplications/{applicationId} {
+      allow create: if isValidCreatorApplication(incoming());
+      allow read: if false;
+    }
+
+    function isValidCreatorApplication(data) {
+      return data.keys().hasAll(['fullName', 'email', 'platform', 'niche', 'followerCount', 'bio', 'status', 'createdAt'])
+        && data.keys().size() == 8
+        && data.fullName is string && data.fullName.size() > 0 && data.fullName.size() <= 200
+        && data.email is string && data.email.size() > 0 && data.email.size() <= 200 && data.email.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$')
+        && data.platform is string && data.platform.size() > 0
+        && data.niche is string && data.niche.size() > 0
+        && data.followerCount is string && data.followerCount.size() > 0
+        && data.bio is string && data.bio.size() > 0 && data.bio.size() <= 2000
+        && data.status == 'pending'
+        && data.createdAt == request.time;
+    }
+  }
+}

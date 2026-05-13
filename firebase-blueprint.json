@@ -1,0 +1,46 @@
+{
+  "entities": {
+    "brandApplication": {
+      "title": "Brand Application",
+      "description": "Application from a brand to join the platform",
+      "type": "object",
+      "properties": {
+        "companyName": { "type": "string", "description": "Name of the company" },
+        "contactName": { "type": "string", "description": "Name of the contact person" },
+        "email": { "type": "string", "format": "email", "description": "Contact email" },
+        "industry": { "type": "string", "description": "Industry niche" },
+        "budget": { "type": "string", "description": "Estimated budget range" },
+        "objective": { "type": "string", "description": "Campaign objective" },
+        "status": { "type": "string", "enum": ["pending", "reviewed", "accepted", "rejected"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["companyName", "contactName", "email", "industry", "budget", "objective", "status", "createdAt"]
+    },
+    "creatorApplication": {
+      "title": "Creator Application",
+      "description": "Application from a creator to join the platform",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string", "description": "Full name of the creator" },
+        "email": { "type": "string", "format": "email", "description": "Contact email" },
+        "platform": { "type": "string", "description": "Primary social media platform" },
+        "niche": { "type": "string", "description": "Content niche" },
+        "followerCount": { "type": "string", "description": "Follower count range" },
+        "bio": { "type": "string", "description": "Information about the creator" },
+        "status": { "type": "string", "enum": ["pending", "reviewed", "accepted", "rejected"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["fullName", "email", "platform", "niche", "followerCount", "bio", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/brandApplications/{id}": {
+      "schema": "brandApplication",
+      "description": "Collection of brand applications"
+    },
+    "/creatorApplications/{id}": {
+      "schema": "creatorApplication",
+      "description": "Collection of creator applications"
+    }
+  }
+}
